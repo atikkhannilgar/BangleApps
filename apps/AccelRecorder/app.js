@@ -1,5 +1,3 @@
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 
 var fileNumber = 0;
 var MAXLOGS = 9;
