@@ -1,0 +1,319 @@
+var fileNumber = 0;
+var MAXLOGS = 9;
+var logRawData = false;
+var recording = false; // New variable to track recording state
+var recordingInterval;
+
+// Declare accelHandler in the global scope
+function accelHandler(accel) {
+  // ... (unchanged code for handling accelerometer data)
+}
+
+function getFileName(n) {
+  return "accellog."+n+".csv";
+}
+
+function showMenu() {
+  var menu = {
+    "" : { title : "Accel Logger" },
+    "File No" : {
+      value : fileNumber,
+      min : 0,
+      max : MAXLOGS,var fileNumber = 0;
+var MAXLOGS = 9;
+var logRawData = false;
+var recording = false; // New variable to track recording state
+var recordingInterval;
+
+// Declare accelHandler in the global scope
+function accelHandler(accel) {
+  // ... (unchanged code for handling accelerometer data)
+}
+
+function getFileName(n) {
+  return "accellog."+n+".csv";
+}
+
+function showMenu() {
+  var menu = {
+    "" : { title : "Accel Logger" },
+    "File No" : {
+      value : fileNumber,
+      min : 0,
+      max : MAXLOGS,
+      onchange : v => { fileNumber=v; }
+    },
+    "Start" : function() {
+      toggleRecord();
+    },
+    "View Logs" : function() {
+      viewLogs();
+    },
+    "Log raw data" : {
+      value : !!logRawData,
+      onchange : v => { logRawData=v; }
+    },
+    "Stop" : function() {
+      stopRecord();
+    },
+  };
+  E.showMenu(menu);
+}
+
+function stopRecord() {
+    recording = false;
+    Bangle.removeListener('accel', accelHandler);
+    clearInterval(recordingInterval);
+    E.showMessage("stopping...");
+    showMenu(); // Go back to the main menu after stopping recording
+}
+
+function viewLog(n) {
+  E.showMessage("Loading...");
+  var f = require("Storage").open(getFileName(n), "r");
+  var records = 0, l = "", ll="";
+  while ((l=f.readLine())!==undefined) {records++;ll=l;}
+  var length = 0;
+  if (ll) length = Math.round( (ll.split(",")[0]|0)/1000 );
+
+  var menu = {
+    "" : { title : "Log "+n },
+    "< Back" : () => { viewLogs(); },
+    "Back to Menu" : () => { showMenu(); },
+  };
+  menu[records+" Records"] = "";
+  menu[length+" Seconds"] = "";
+  menu["DELETE"] = function() {
+    E.showPrompt("Delete Log "+n).then(ok=>{
+      if (ok) {
+        E.showMessage("Erasing...");
+        var f = require("Storage").open(getFileName(n), "r");
+        f.erase();
+        viewLogs();
+      } else viewLog(n);
+    });
+  };
+
+  E.showMenu(menu);
+}
+
+function viewLogs() {
+  var menu = {
+    "" : { title : "Logs" },
+    "< Back" : () => { showMenu(); }
+  };
+
+  var hadLogs = false;
+  for (var i=0;i<=MAXLOGS;i++) {
+    var f = require("Storage").open(getFileName(i), "r");
+    if (f.readLine()!==undefined) {
+      (function(i) {
+        menu["Log "+i] = () => viewLog(i);
+      })(i);
+      hadLogs = true;
+    }
+  }
+  if (!hadLogs)
+    menu["No Logs Found"] = function(){};
+  E.showMenu(menu);
+}
+
+function toggleRecord() {
+  if (recording) {
+    stopRecord();
+  } else {
+    startRecord();
+    E.showMessage("starting...");
+    showMenu();
+  }
+}
+
+function startRecord(force) {
+  if (recording && !force) return; // Avoid starting a new recording while one is already in progress
+
+  // Set up recording logic
+  var start = getTime();
+  var sampleCount = 0;
+
+  // Open the file in write mode ("w") to clear existing content
+  var f = require("Storage").open(getFileName(fileNumber), "w");
+  f.write("Time (ms),X,Y,Z,Total\n");
+
+  function accelHandler(accel) {
+    if (recording) {
+      var t = getTime() - start;
+
+      // Write accelerometer data to file
+      if (logRawData) {
+        f.write([
+          t * 1000,
+          accel.x * 8192,
+          accel.y * 8192,
+          accel.z * 8192,
+          accel.mag * 8192,
+        ].map(n => Math.round(n)).join(",") + "\n");
+      } else {
+        f.write([
+          Math.round(t * 1000),
+          accel.x,
+          accel.y,
+          accel.z,
+          accel.mag,
+        ].join(",") + "\n");
+      }
+
+      sampleCount++;
+    }
+  }
+
+  Bangle.setPollInterval(80);
+  Bangle.on('accel', accelHandler);
+  recording = true; // Update recording state
+
+  // Start a background interval to keep recording (adjust interval as needed)
+  recordingInterval = setInterval(() => {
+    // Do nothing, just keep the recording going
+  }, 1000);
+}
+
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+showMenu();
+      onchange : v => { fileNumber=v; }
+    },
+    "Start" : function() {
+      toggleRecord();
+    },
+    "View Logs" : function() {
+      viewLogs();
+    },
+    "Log raw data" : {
+      value : !!logRawData,
+      onchange : v => { logRawData=v; }
+    },
+    "Stop" : function() {
+      stopRecord();
+    },
+  };
+  E.showMenu(menu);
+}
+
+function stopRecord() {
+    recording = false;
+    Bangle.removeListener('accel', accelHandler);
+    clearInterval(recordingInterval);
+    E.showMessage("stopping...");
+    showMenu(); // Go back to the main menu after stopping recording
+}
+
+function viewLog(n) {
+  E.showMessage("Loading...");
+  var f = require("Storage").open(getFileName(n), "r");
+  var records = 0, l = "", ll="";
+  while ((l=f.readLine())!==undefined) {records++;ll=l;}
+  var length = 0;
+  if (ll) length = Math.round( (ll.split(",")[0]|0)/1000 );
+
+  var menu = {
+    "" : { title : "Log "+n },
+    "< Back" : () => { viewLogs(); },
+    "Back to Menu" : () => { showMenu(); },
+  };
+  menu[records+" Records"] = "";
+  menu[length+" Seconds"] = "";
+  menu["DELETE"] = function() {
+    E.showPrompt("Delete Log "+n).then(ok=>{
+      if (ok) {
+        E.showMessage("Erasing...");
+        var f = require("Storage").open(getFileName(n), "r");
+        f.erase();
+        viewLogs();
+      } else viewLog(n);
+    });
+  };
+
+  E.showMenu(menu);
+}
+
+function viewLogs() {
+  var menu = {
+    "" : { title : "Logs" },
+    "< Back" : () => { showMenu(); }
+  };
+
+  var hadLogs = false;
+  for (var i=0;i<=MAXLOGS;i++) {
+    var f = require("Storage").open(getFileName(i), "r");
+    if (f.readLine()!==undefined) {
+      (function(i) {
+        menu["Log "+i] = () => viewLog(i);
+      })(i);
+      hadLogs = true;
+    }
+  }
+  if (!hadLogs)
+    menu["No Logs Found"] = function(){};
+  E.showMenu(menu);
+}
+
+function toggleRecord() {
+  if (recording) {
+    stopRecord();
+  } else {
+    startRecord();
+    E.showMessage("starting...");
+    showMenu();
+  }
+}
+
+function startRecord(force) {
+  if (recording && !force) return; // Avoid starting a new recording while one is already in progress
+
+  // Set up recording logic
+  var start = getTime();
+  var sampleCount = 0;
+
+  // Open the file in write mode ("w") to clear existing content
+  var f = require("Storage").open(getFileName(fileNumber), "w");
+  f.write("Time (ms),X,Y,Z,Total\n");
+
+  function accelHandler(accel) {
+    if (recording) {
+      var t = getTime() - start;
+
+      // Write accelerometer data to file
+      if (logRawData) {
+        f.write([
+          t * 1000,
+          accel.x * 8192,
+          accel.y * 8192,
+          accel.z * 8192,
+          accel.mag * 8192,
+        ].map(n => Math.round(n)).join(",") + "\n");
+      } else {
+        f.write([
+          Math.round(t * 1000),
+          accel.x,
+          accel.y,
+          accel.z,
+          accel.mag,
+        ].join(",") + "\n");
+      }
+
+      sampleCount++;
+    }
+  }
+
+  Bangle.setPollInterval(80);
+  Bangle.on('accel', accelHandler);
+  recording = true; // Update recording state
+
+  // Start a background interval to keep recording (adjust interval as needed)
+  recordingInterval = setInterval(() => {
+    // Do nothing, just keep the recording going
+  }, 1000);
+}
+
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+showMenu();
