@@ -28,6 +28,7 @@ function getFileName(n) {
 function showMenu() {
   var menu = {
     "" : { title : "Accel Logger" },
+    /*LANG*/"< Back": () => back(),
     "File No" : {
       value : fileNumber,
       min : 0,
@@ -154,7 +155,7 @@ function startRecord(force) {
           Math.round(t * 1000),
           accel.x,
           accel.y,
-          accel.z,
+          accel.z,function showMain(selected) {
           accel.mag,
         ].join(",") + "\n");
       }
@@ -162,6 +163,7 @@ function startRecord(force) {
       sampleCount++;
     }
   }
+
 
   Bangle.setPollInterval(80);
   Bangle.on('accel', accelHandler);
