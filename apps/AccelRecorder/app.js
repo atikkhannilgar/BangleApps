@@ -1,3 +1,6 @@
+Bangle.loadWidgets();
+Bangle.drawWidgets();
+
 var fileNumber = 0;
 var MAXLOGS = 9;
 var logRawData = false;
@@ -172,8 +175,5 @@ function startRecord(force) {
     // Do nothing, just keep the recording going
   }, 1000);
 }
-
-Bangle.loadWidgets();
-Bangle.drawWidgets();
-showMenu();
+//showMenu();
 
