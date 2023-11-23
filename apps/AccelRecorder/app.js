@@ -28,7 +28,7 @@ function getFileName(n) {
 function showMenu() {
   var menu = {
     "" : { title : "Accel Logger" },
-    /*LANG*/"< Back": () => back(),
+    /*LANG*/"< Back": () => load(),
     "File No" : {
       value : fileNumber,
       min : 0,
