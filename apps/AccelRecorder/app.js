@@ -175,5 +175,5 @@ function startRecord(force) {
     // Do nothing, just keep the recording going
   }, 1000);
 }
-//showMenu();
+showMenu();
 
