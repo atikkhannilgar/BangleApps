@@ -155,7 +155,7 @@ function startRecord(force) {
           Math.round(t * 1000),
           accel.x,
           accel.y,
-          accel.z,function showMain(selected) {
+          accel.z,
           accel.mag,
         ].join(",") + "\n");
       }
