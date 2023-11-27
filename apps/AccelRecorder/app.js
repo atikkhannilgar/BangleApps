@@ -64,7 +64,7 @@ function stopRecord() {
       recordingWidget = undefined;
     }
 }
-setInterval(stopRecord,1000);
+//setInterval(stopRecord,1000);
 function viewLog(n) {
   E.showMessage("Loading...");
   var f = require("Storage").open(getFileName(n), "r");
@@ -124,7 +124,7 @@ function toggleRecord() {
     showMenu();
   }
 }
-setInterval(toggleRecord,1000);
+//setInterval(toggleRecord,1000);
 function startRecord(force) {
   createRecordingWidget();
   if (recording && !force) return; // Avoid starting a new recording while one is already in progress
@@ -164,16 +164,16 @@ function startRecord(force) {
       sampleCount++;
     }
   }
-  setInterval(startRecord,1000);
+  //setInterval(startRecord,1000);
 
   Bangle.setPollInterval(1000);
   Bangle.on('accel', accelHandler);
   recording = true; // Update recording state
 
   // Start a background interval to keep recording (adjust interval as needed)
-  recordingInterval = setInterval(() => {
+  //recordingInterval = setInterval(() => {
     // Do nothing, just keep the recording going
-  }, 1000);
+  //}, 1000);
 }
 
 Bangle.loadWidgets();
