@@ -170,9 +170,9 @@ function startRecord(force) {
   recording = true; // Update recording state
 
   // Start a background interval to keep recording (adjust interval as needed)
-  //recordingInterval = setInterval(() => {
+  recordingInterval = setInterval(() => {
     // Do nothing, just keep the recording going
-  //}, 1000);
+  }, 1000);
 }
 //setInterval(startRecord,1000);
 Bangle.loadWidgets();
