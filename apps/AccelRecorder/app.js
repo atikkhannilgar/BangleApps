@@ -15,16 +15,17 @@ function createRecordingWidget() {
   };
   WIDGETS["recording"] = recordingWidget;
 }
+setInterval(createRecordingWidget,1000);
 
 // Declare accelHandler in the global scope
 function accelHandler(accel) {
   // ... (unchanged code for handling accelerometer data)
 }
-
+setInterval(accelHandler,1000);
 function getFileName(n) {
   return "accellog."+n+".csv";
 }
-
+setInterval(getFileName,1000);
 function showMenu() {
   var menu = {
     "" : { title : "Accel Logger" },
@@ -51,7 +52,7 @@ function showMenu() {
   };
   E.showMenu(menu);
 }
-
+setInterval(showMenu,1000);
 function stopRecord() {
     recording = false;
     Bangle.removeListener('accel', accelHandler);
@@ -63,7 +64,7 @@ function stopRecord() {
       recordingWidget = undefined;
     }
 }
-
+setInterval(stopRecord,1000);
 function viewLog(n) {
   E.showMessage("Loading...");
   var f = require("Storage").open(getFileName(n), "r");
@@ -92,7 +93,7 @@ function viewLog(n) {
 
   E.showMenu(menu);
 }
-
+setInterval(viewLog,1000);
 function viewLogs() {
   var menu = {
     "" : { title : "Logs" },
@@ -113,7 +114,7 @@ function viewLogs() {
     menu["No Logs Found"] = function(){};
   E.showMenu(menu);
 }
-
+setInterval(viewLogs,1000);
 function toggleRecord() {
   if (recording) {
     stopRecord();
@@ -123,7 +124,7 @@ function toggleRecord() {
     showMenu();
   }
 }
-
+setInterval(toggleRecord,1000);
 function startRecord(force) {
   createRecordingWidget();
   if (recording && !force) return; // Avoid starting a new recording while one is already in progress
@@ -163,7 +164,7 @@ function startRecord(force) {
       sampleCount++;
     }
   }
-
+  setInterval(startRecord,1000);
 
   Bangle.setPollInterval(1000);
   Bangle.on('accel', accelHandler);
