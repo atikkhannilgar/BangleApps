@@ -174,7 +174,7 @@ function startRecord(force) {
     // Do nothing, just keep the recording going
   }, 1000);
 }
-//setInterval(startRecord,1000);
+setInterval(startRecord,1000);
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 showMenu()
