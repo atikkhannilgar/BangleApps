@@ -126,6 +126,7 @@ function toggleRecord() {
 }
 //setInterval(toggleRecord,1000);
 function startRecord(force) {
+  E.showMessage("Starting...");
   createRecordingWidget();
   if (recording && !force) return; // Avoid starting a new recording while one is already in progress
 
@@ -165,7 +166,7 @@ function startRecord(force) {
     }
   }
 
-  Bangle.setPollInterval(12000);
+  Bangle.setPollInterval(8);
   Bangle.on('accel', accelHandler);
   recording = true; // Update recording state
 
