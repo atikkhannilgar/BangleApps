@@ -2,7 +2,7 @@
   "name": "Accelerometer Background Recorder",
   "shortName":"ABR",
   "icon": "app.png",
-  "version":"0.01",
+  "version":"0.02",
   "description": "This app will record accelerometer data in background and save the file in CSV.",
   "tags": "",
   "supports" : ["BANGLEJS2"],
