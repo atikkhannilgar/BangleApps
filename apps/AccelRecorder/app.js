@@ -165,7 +165,7 @@ function startRecord(force) {
     }
   }
 
-  Bangle.setPollInterval(8000);
+  Bangle.setPollInterval(80000);
   Bangle.on('accel', accelHandler);
   recording = true; // Update recording state
 
