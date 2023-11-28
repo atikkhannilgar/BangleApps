@@ -175,8 +175,9 @@ function startRecord(force) {
   }, 1000);
 }
 Bangle.setAppOptions({
-stopOnButtonLong: false;
-closeOnDeepSleep: false;
+stopOnButtonLong: false,
+closeOnDeepSleep: false,
+});
 //setInterval(startRecord,1000);
 Bangle.loadWidgets();
 Bangle.drawWidgets();
