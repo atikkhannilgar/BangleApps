@@ -8,6 +8,8 @@ var start = getTime();
 var sampleCount = 0;
 var settings = require("Storage").readJSON("AccelRecorder.json",1)||{}
 
+Bangle.loadWidgets();
+Bangle.drawWidgets();
 
 function createRecordingWidget() {
   recordingWidget = {
@@ -34,9 +36,7 @@ function getFileName(n) {
 function showMenu() {
   var menu = {
     "": { title: "Accel Logger" },
-    //"< Back": () => {
-    //  Bangle.showLauncher();
-    //},
+    "< Back": () => {load();},
     "File No": {
       value: fileNumber,
       min: 0,
@@ -133,7 +133,7 @@ function toggleRecord() {
 }
 
 function startRecord(force) {
-  createRecordingWidget();
+  createRecordingWidget()
   if (recording && !force) return;
   var f = require("Storage").open(getFileName(fileNumber), "w");
   f.write("Date,Time,X,Y,Z,Total\n");
@@ -180,7 +180,11 @@ function startRecord(force) {
     }
   }, 1000); // Save data every 1 minute
 }
+// Add this part to keep the widget active even when the app is closed
+Bangle.on('kill', () => {
+  if (recording) {
+    stopRecord();
+  }
+});
 
-Bangle.loadWidgets();
-Bangle.drawWidgets();
 showMenu();
