@@ -28,13 +28,6 @@ function getFileName(n) {
 }
 //setInterval(getFileName,1000);
 
-function updateSettings() {
-  require("Storage").write("AccelRecorder.json", settings);
-  if (WIDGETS["AccelRecorder"])
-    WIDGETS["AccelRecorder"].reload();
-  return;
-}
-
 function showMenu() {
   var menu = {
     "" : { title : "Accel Logger" },
@@ -45,10 +38,7 @@ function showMenu() {
       max : MAXLOGS,
       onchange : v => { fileNumber=v; }
     },
-    "Start" : function() {value: !!settings.isRecording,
-      onchange: v => {
-        settings.isRecording = v;
-        updateSettings();
+    "Start" : function() {
       toggleRecord();
     },
     "View Logs" : function() {
@@ -60,7 +50,6 @@ function showMenu() {
     },
     "Stop" : function() {
       stopRecord();
-      updateSettings();
     },
   };
   E.showMenu(menu);
