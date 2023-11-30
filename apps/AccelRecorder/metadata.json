@@ -10,6 +10,6 @@
     {"name":"AccelRecorder.app.js","url":"app.js"},
     {"name":"AccelRecorder.img","url":"app-icon.js","evaluate":true},
     {"name":"AccelRecorder.settings.js","url":"app-settings.js"}
-  ]
+  ],
   "data": [{"name":"AccelRecorder.json"},{"wildcard":"accellog.?.csv","storageFile":true}]
 }
