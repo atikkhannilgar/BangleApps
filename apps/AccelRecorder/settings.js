@@ -1,3 +1,3 @@
 {
-  "isRecording":false,
+  "isRecording":false
 }
