@@ -4,6 +4,7 @@ var logRawData = false;
 var recording = false; // New variable to track recording state
 var recordingInterval;
 var recordingWidget;
+var settings = require("Storage").readJSON("AccelRecorder.json",1)||{}
 
 function createRecordingWidget() {
   recordingWidget = {
@@ -26,17 +27,28 @@ function getFileName(n) {
   return "accellog."+n+".csv";
 }
 //setInterval(getFileName,1000);
+
+function updateSettings() {
+  require("Storage").write("AccelRecorder.json", settings);
+  if (WIDGETS["AccelRecorder"])
+    WIDGETS["AccelRecorder"].reload();
+  return;
+}
+
 function showMenu() {
   var menu = {
     "" : { title : "Accel Logger" },
-    /*LANG*/"< Back": () => Bangle.showLauncher(),
+    /*LANG*/"< Back": () => {load();},
     "File No" : {
       value : fileNumber,
       min : 0,
       max : MAXLOGS,
       onchange : v => { fileNumber=v; }
     },
-    "Start" : function() {
+    "Start" : function() {value: !!settings.isRecording,
+      onchange: v => {
+        settings.isRecording = v;
+        updateSettings();
       toggleRecord();
     },
     "View Logs" : function() {
@@ -48,6 +60,7 @@ function showMenu() {
     },
     "Stop" : function() {
       stopRecord();
+      updateSettings();
     },
   };
   E.showMenu(menu);
