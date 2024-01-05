@@ -6,8 +6,11 @@ var recordingInterval;
 var recordingWidget;
 var start = getTime();
 var sampleCount = 0;
+var accumulatedAccel = { x: 0, y: 0, z: 0, mag: 0 };
 var settings = require("Storage").readJSON("AccelRecorder.json",1)||{}
-
+var accumulatedSteps = 0;
+var accumulatedHeartRate = 0;
+Bangle.setHRMPower(1);
 Bangle.loadWidgets();
 Bangle.drawWidgets();
 
@@ -25,8 +28,13 @@ function createRecordingWidget() {
 // Declare accelHandler in the global scope
 function accelHandler(accel) {
   if (recording) {
-      sampleCount++;
-    }
+    sampleCount++;
+    accumulatedAccel.x += accel.x;
+    accumulatedAccel.y += accel.y;
+    accumulatedAccel.z += accel.z;
+    accumulatedAccel.mag += accel.mag;
+
+  }
 }
 
 function getFileName(n) {
@@ -44,7 +52,9 @@ function showMenu() {
       onchange: v => { fileNumber = v; }
     },
     "Start": function() {
-      toggleRecord();
+      startRecord();
+      E.showMessage("Recording..");
+      showMenu(menu)
     },
     "View Logs": function() {
       viewLogs();
@@ -63,7 +73,6 @@ function showMenu() {
 function stopRecord() {
   recording = false;
   Bangle.removeListener('accel', accelHandler);
-  //clearInterval(recordingInterval);
   E.showMessage("stopping...");
   showMenu();
   if (recordingWidget) {
@@ -121,22 +130,14 @@ function viewLogs() {
     menu["No Logs Found"] = function() {};
   E.showMenu(menu);
 }
-
-function toggleRecord() {
-  if (recording) {
-    stopRecord();
-  } else {
-    startRecord();
-    E.showMessage("starting...");
-    showMenu();
-  }
+function onHRM(hrm) {
+  accumulatedHeartRate = hrm.bpm;
 }
-
 function startRecord(force) {
   createRecordingWidget()
   if (recording && !force) return;
   var f = require("Storage").open(getFileName(fileNumber), "w");
-  f.write("Date,Time,X,Y,Z,Total\n");
+  f.write("Date,Time,X,Y,Z,Total,Heartrate\n");
 
   accelHandler();
 
@@ -153,38 +154,51 @@ function startRecord(force) {
       var dateString = now.toISOString().slice(0, 10);
       var timeString = now.toISOString().slice(11, 19);
 
-      // Write accelerometer data to file with timestamp
+      // Calculate average accelerometer data
       if (sampleCount > 0) {
-        var lastAccel = Bangle.getAccel();
+        var avgAccel = {
+          x: accumulatedAccel.x / sampleCount,
+          y: accumulatedAccel.y / sampleCount,
+          z: accumulatedAccel.z / sampleCount,
+          mag: accumulatedAccel.mag / sampleCount,
+        };
+        var steps = Bangle.getHealthStatus("day").steps;
+       //var steps_avg = accumulatedSteps / sampleCount;
+
+        // Write average accelerometer data to file with timestamp
         if (logRawData) {
           f.write([
             dateString,
             timeString,
-            lastAccel.x * 8192,
-            lastAccel.y * 8192,
-            lastAccel.z * 8192,
-            lastAccel.mag * 8192,
+            avgAccel.x * 8192,
+            avgAccel.y * 8192,
+            avgAccel.z * 8192,
+            avgAccel.mag * 8192,
           ].map(n => Math.round(n)).join(",") + "\n");
         } else {
           f.write([
             dateString,
             timeString,
-            lastAccel.x,
-            lastAccel.y,
-            lastAccel.z,
-            lastAccel.mag,
+            avgAccel.x,
+            avgAccel.y,
+            avgAccel.z,
+            avgAccel.mag,
+            accumulatedHeartRate,
+            //steps,
           ].join(",") + "\n");
         }
+
+        // Reset accumulated values and sample count
+        accumulatedAccel = { x: 0, y: 0, z: 0, mag: 0 };
         sampleCount = 0;
+        // Reset accumulated steps count and heart rate
+        accumulatedSteps = 0;
+        accumulatedHeartRate = 0;
       }
     }
-  }, 1000); // Save data every 1 minute
+  }, 60000); // Save data every 1 minute
 }
-// Add this part to keep the widget active even when the app is closed
-Bangle.on('kill', () => {
-  if (recording) {
-    stopRecord();
-  }
-});
 
 showMenu();
+// Add HRM event listener
+Bangle.on('HRM', onHRM);
