@@ -9,11 +9,13 @@ var sampleCount = 0;
 var accumulatedAccel = { x: 0, y: 0, z: 0, mag: 0 };
 var settings = require("Storage").readJSON("AccelRecorder.json",1)||{}
 var accumulatedSteps = 0;
-var accumulatedHeartRate = 0;
+var HeartRate = 0;
+var HR_confidence = 0;
+var steps = 0;
 Bangle.setHRMPower(1);
 Bangle.loadWidgets();
 Bangle.drawWidgets();
-Bangle.setStepCount() = 0;
+//Bangle.setStepCount() = 0;
 
 function createRecordingWidget() {
   recordingWidget = {
@@ -132,13 +134,17 @@ function viewLogs() {
   E.showMenu(menu);
 }
 function onHRM(hrm) {
-  accumulatedHeartRate = hrm.bpm;
+  HeartRate = hrm.bpm;
+  HR_confidence = hrm.confidence;
+}
+function step_count {
+  steps = Bangle.getStepCount();
 }
 function startRecord(force) {
   createRecordingWidget()
   if (recording && !force) return;
   var f = require("Storage").open(getFileName(fileNumber), "w");
-  f.write("Date,Time,X,Y,Z,Total,Heartrate,Steps\n");
+  f.write("Date,Time,X,Y,Z,Total,Heartrate,Confidence,Steps\n");
 
   accelHandler();
 
@@ -163,7 +169,7 @@ function startRecord(force) {
           z: accumulatedAccel.z / sampleCount,
           mag: accumulatedAccel.mag / sampleCount,
         };
-        var steps = Bangle.getStepCount();
+        
        //var steps_avg = accumulatedSteps / sampleCount;
 
         // Write average accelerometer data to file with timestamp
@@ -184,7 +190,8 @@ function startRecord(force) {
             avgAccel.y,
             avgAccel.z,
             avgAccel.mag,
-            accumulatedHeartRate,
+            HeartRate,
+            HR_confidence
             steps,
           ].join(",") + "\n");
         }
@@ -193,8 +200,9 @@ function startRecord(force) {
         accumulatedAccel = { x: 0, y: 0, z: 0, mag: 0 };
         sampleCount = 0;
         // Reset accumulated steps count and heart rate
-        accumulatedSteps = 0;
-        accumulatedHeartRate = 0;
+        //accumulatedSteps = 0;
+        //HeartRate = 0;
+        //HR_confidence = 0;
       }
     }
   }, 60000); // Save data every 1 minute
