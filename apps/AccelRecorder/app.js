@@ -10,7 +10,7 @@ var accumulatedAccel = { x: 0, y: 0, z: 0, mag: 0 };
 var settings = require("Storage").readJSON("AccelRecorder.json",1)||{}
 //var accumulatedSteps = 0;
 var HeartRate = 0;
-//var HR_confidence = 0;
+var HR_confidence = 0;
 var steps = 0;
 Bangle.setHRMPower(1);
 Bangle.loadWidgets();
@@ -135,7 +135,7 @@ function viewLogs() {
 }
 function onHRM(hrm) {
   var HeartRate = hrm.bpm;
-  //var HR_confidence = hrm.confidence;
+  var HR_confidence = hrm.confidence;
 }
 function step_count() {
   var steps = Bangle.getStepCount();
