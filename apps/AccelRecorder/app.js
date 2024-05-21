@@ -191,7 +191,7 @@ function startRecord(force) {
             avgAccel.z,
             avgAccel.mag,
             HeartRate,
-            HR_confidence
+            HR_confidence,
             steps,
           ].join(",") + "\n");
         }
