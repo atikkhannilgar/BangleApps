@@ -13,6 +13,7 @@ var accumulatedHeartRate = 0;
 Bangle.setHRMPower(1);
 Bangle.loadWidgets();
 Bangle.drawWidgets();
+Bangle.setStepCount() = 0;
 
 function createRecordingWidget() {
   recordingWidget = {
@@ -162,7 +163,7 @@ function startRecord(force) {
           z: accumulatedAccel.z / sampleCount,
           mag: accumulatedAccel.mag / sampleCount,
         };
-        var steps = Bangle.getHealthStatus("day").steps;
+        var steps = Bangle.getStepCount();
        //var steps_avg = accumulatedSteps / sampleCount;
 
         // Write average accelerometer data to file with timestamp
