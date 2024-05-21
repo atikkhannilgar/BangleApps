@@ -134,11 +134,11 @@ function viewLogs() {
   E.showMenu(menu);
 }
 function onHRM(hrm) {
-  HeartRate = hrm.bpm;
-  HR_confidence = hrm.confidence;
+  var HeartRate = hrm.bpm;
+  var HR_confidence = hrm.confidence;
 }
 function step_count {
-  steps = Bangle.getStepCount();
+  var steps = Bangle.getStepCount();
 }
 function startRecord(force) {
   createRecordingWidget()
