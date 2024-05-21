@@ -138,7 +138,7 @@ function startRecord(force) {
   createRecordingWidget()
   if (recording && !force) return;
   var f = require("Storage").open(getFileName(fileNumber), "w");
-  f.write("Date,Time,X,Y,Z,Total,Heartrate\n");
+  f.write("Date,Time,X,Y,Z,Total,Heartrate,Steps\n");
 
   accelHandler();
 
