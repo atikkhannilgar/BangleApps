@@ -184,7 +184,7 @@ function startRecord(force) {
             avgAccel.z,
             avgAccel.mag,
             accumulatedHeartRate,
-            //steps,
+            steps,
           ].join(",") + "\n");
         }
 
