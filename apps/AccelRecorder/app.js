@@ -9,9 +9,7 @@ var sampleCount = 0;
 var accumulatedAccel = { x: 0, y: 0, z: 0, mag: 0 };
 var settings = require("Storage").readJSON("AccelRecorder.json",1)||{}
 //var accumulatedSteps = 0;
-var HeartRate = 0;
-var HR_confidence = 0;
-var steps = 0;
+
 Bangle.setHRMPower(1);
 Bangle.loadWidgets();
 Bangle.drawWidgets();
@@ -192,7 +190,7 @@ function startRecord(force) {
             avgAccel.mag,
             HeartRate,
             HR_confidence,
-            steps,
+            step_count(),
           ].join(",") + "\n");
         }
 
